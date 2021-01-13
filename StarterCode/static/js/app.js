@@ -12,6 +12,7 @@ d3.json("samples.json").then((data)=> {
     // Connect the other fuctions to the value in drop down
     demographics(data.names[0])
     bar_chart(data.names[0])
+    bubble_chart(data.names[0])
 
 });
 
@@ -62,7 +63,7 @@ function bar_chart(id) {
     
 
         // define the bar chart values
-        var traceBar = {
+        var trace_bar = {
             x: subject_sample_data,
             y: top_samples_2,
             text: label,
@@ -74,10 +75,10 @@ function bar_chart(id) {
             orientation: "h",
         };
           
-        var dataBar = [traceBar];
+        var data_bar = [trace_bar];
   
         // define bar chart layout
-        var layoutBar = {
+        var layout_bar = {
             title: "Top Ten Operational Taxonomic Units",
             yaxis:{
                 tickmode:"linear",
@@ -86,14 +87,51 @@ function bar_chart(id) {
                 l: 100,
                 r: 100,
                 t: 100,
-                b: 50
+                b: 100,
             }
         };
   
         // generate bar chart on bar id in the HTML
-        Plotly.newPlot("bar", dataBar, layoutBar);
+        Plotly.newPlot("bar", data_bar, layout_bar);
 
     });
 }
 
 
+// Bubble chart
+function bubble_chart(id) {
+    d3.json("samples.json").then((data)=> {
+
+        // grab the sample data of the person choosen in the dropdown
+        var subject_sample = data.samples.filter(sample => sample.id.toString() === id)[0];
+        
+        // define the bar chart values
+        var trace_bubble = {
+            x: subject_sample.otu_ids,
+            y: subject_sample.sample_values,
+            mode: "markers",
+            marker: {
+                size: subject_sample.sample_values,
+                color: subject_sample.otu_ids,
+                colorscale: "Blockbody"
+            },
+            text: subject_sample.otu_labels
+  
+        };
+  
+        // define bubble chart layout
+        var layout_bubble = {
+            title: { text: `Sample Values by Operational Taxonomic Unit` },
+            xaxis:{title: "OTU ID"},
+            height: 500,
+            width: 1200
+        };
+  
+        // Create the data array for the bubble plot 
+        var data_bubble = [trace_bubble];
+  
+        // generate bubble chart on bubble id in the HTML
+        Plotly.newPlot("bubble", data_bubble, layout_bubble);
+
+    });
+}
