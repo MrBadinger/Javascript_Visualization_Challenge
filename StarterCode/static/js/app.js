@@ -14,6 +14,7 @@ d3.json("samples.json").then((data)=> {
     demographics(data.names[0])
     bar_chart(data.names[0])
     bubble_chart(data.names[0])
+    gauge_chart(data.names[0])
 
 });
 
@@ -21,6 +22,7 @@ function optionChanged(id) {
     demographics(id)
     bar_chart(id)
     bubble_chart(id)
+    gauge_chart(id)
 };
 
 
@@ -139,3 +141,55 @@ function bubble_chart(id) {
 }
 
 
+// Gauge chart
+function gauge_chart(id) {
+    d3.json("samples.json").then((data)=> {
+
+
+        // grab the sample data of the person choosen in the dropdown
+        var person = data.metadata.filter(meta => meta.id.toString() === id)[0];
+        
+        var hand_wash_data = person.wfreq
+
+        // define the gauge chart values
+        var data = [
+            {
+              type: "indicator",
+              mode: "gauge+number",
+              value: parseFloat(hand_wash_data),
+              title: { text: "Weakly Washing Frequency", font: { size: 24 } },
+              gauge: {
+                axis: { range: [0, 9], tickwidth: 1, tickcolor: "darkblue" },
+                bar: { color: "darkblue" },
+                steps: [
+                  { range: [0, 1], color: "cyan" },
+                  { range: [1, 2], color: "royalblue" },
+                  { range: [2, 3], color: "cyan" },
+                  { range: [3, 4], color: "royalblue" },
+                  { range: [4, 5], color: "cyan" },
+                  { range: [5, 6], color: "royalblue" },
+                  { range: [6, 7], color: "cyan" },
+                  { range: [7, 8], color: "royalblue" },
+                  { range: [8, 9], color: "cyan" }
+                ],
+                threshold: {
+                  line: { color: "red", width: 4 },
+                  thickness: 0.75,
+                  value: parseFloat(hand_wash_data)
+                }
+              }
+            }
+          ];
+          
+          var layout = {
+            width: 500,
+            height: 400,
+            margin: { t: 25, r: 25, l: 25, b: 25 },
+            paper_bgcolor: "lavender",
+            font: { color: "darkblue", family: "Arial" }
+          };
+          
+          Plotly.newPlot('gauge', data, layout);
+
+    });
+}
