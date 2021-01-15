@@ -1,3 +1,4 @@
+ 
 // Drop Down Menu
 var drop_down = d3.select("#selDataset");
 
@@ -16,6 +17,13 @@ d3.json("samples.json").then((data)=> {
 
 });
 
+function optionChanged(id) {
+    demographics(id)
+    bar_chart(id)
+    bubble_chart(id)
+};
+
+
 
 
 // Demographics Table
@@ -28,14 +36,12 @@ function demographics(id) {
         // filter metadata to the set that equals the the value in the dropdown menu
         var filtered_data = metadata.filter(meta => meta.id.toString() === id)[0];
 
-        // select the panel-body html class with the id "sample-metadata"
-        var demoInfo = d3.select("#sample-metadata");
-        
-        // clear demographic info
-        demoInfo.html("");
+        // set variable to assing sample-metadata id to hold the demographics table & then remove any potential old values that are not needed
+        var demographics = d3.select("#sample-metadata");
+        demographics.html("");
 
-        // grab the necessary demographic data for the id and append the info to the panel
-        Object.entries(filtered_data).forEach((info) => {demoInfo.append("h5").text(info[0] + ": " + info[1]);    
+        // get the demographic data for the value selected in the drop down and fill out the demographic table
+        Object.entries(filtered_data).forEach((value) => {demographics.append("h5").text(value[0] + ": " + value[1]);    
         });
     });
 }
@@ -51,11 +57,7 @@ function bar_chart(id) {
         
         // orangize sample data from largest to smallest and collect top 10
         var subject_sample_data = subject_sample.sample_values.slice(0, 10).reverse();
-  
-        // orangize out ids from largest to smallest and collect top 10
         var top_samples = (subject_sample.otu_ids.slice(0, 10)).reverse();
-        
-        // organize top otu labels from filtered data and collect top 10
         var label = subject_sample.otu_labels.slice(0, 10);
 
         // format otu lables
@@ -105,7 +107,7 @@ function bubble_chart(id) {
         // grab the sample data of the person choosen in the dropdown
         var subject_sample = data.samples.filter(sample => sample.id.toString() === id)[0];
         
-        // define the bar chart values
+        // define the bubble chart values
         var trace_bubble = {
             x: subject_sample.otu_ids,
             y: subject_sample.sample_values,
@@ -135,3 +137,5 @@ function bubble_chart(id) {
 
     });
 }
+
+
